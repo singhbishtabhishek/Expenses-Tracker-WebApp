@@ -1,0 +1,41 @@
+version: "3.8"
+services:
+  java:
+    build:
+      context: .
+    container_name: "expensesapp"
+    environment:
+      SPRING_DATASOURCE_USERNAME: "root"
+      SPRING_DATASOURCE_URL: "jdbc:mysql://mysql:3306/expenses_tracker?allowPublicKeyRetrieval=true&useSSL=false"
+      SPRING_DATASOURCE_PASSWORD: "Test@123"
+    networks:
+      - judho
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    restart: always
+
+  mysql:
+    image: "mysql"
+    container_name: "qmysql"
+    environment:
+      MYSQL_ROOT_PASSWORD: "Test@123"
+      MYSQL_DATABASE: "expenses_tracker"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD","mysqladmin","ping","-h","localhost","-uroot","-pTest@123"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: always
+    networks:
+      - judho
+
+networks:
+  judho:
+volumes:
+  mysql_data:
+
